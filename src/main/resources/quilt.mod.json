@@ -35,6 +35,18 @@
 			{
 				"id": "minecraft",
 				"versions": ">=1.20"
+			},
+			{
+				"id": "cardinal-components-item",
+				"versions": ">=5.2.2"
+			},
+			{
+				"id": "cardinal-components-entity",
+				"versions": ">=5.2.2"
+			},
+			{
+				"id": "sparkweave",
+				"versions": ">=0.4.1"
 			}
 		]
 	},

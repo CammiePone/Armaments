@@ -15,6 +15,6 @@ Armaments adds a handful of new unique and interesting weapons to the game to he
     </tr>
     <tr>
         <th><a href="https://discord.gg/f5dFYWX"><img src="https://cammiescorner.dev/images/extras/discord.png" width="150" height="150" title="Cammie's Corner Discord" alt="Cammie's Corner Discord"></a></th>
-        <th><a href="https://www.ko-fi.com/camellias_"><img src="https://cammiescorner.dev/images/extras/kofi.png" width="150" height="150" title="Cammie's Corner Ko-Fi" alt="Cammie's Corner Ko-Fi"></a></th>
+        <th><a href="https://www.ko-fi.com/camellias"><img src="https://cammiescorner.dev/images/extras/kofi.png" width="150" height="150" title="Cammie's Corner Ko-Fi" alt="Cammie's Corner Ko-Fi"></a></th>
     </tr>
 </table>
