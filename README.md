@@ -4,7 +4,22 @@
 
 ---
 
-Armaments adds a handful of new unique and interesting weapons to the game to help spice up combat and let players specialize their playstyle more to their liking.
+Armaments adds a handful of new items and mechanics to improve parts of combat that are either niche or not worth while.
+
+### Changes
+```
+Goat Horns - when blown on horseback, your horse will get Speed 2 for 30 seconds and Resistance 1 for 15 seconds.
+Channeling - can now strike lightning in all rain, not just thunderstorms. Lightning from channeling will not ignite blocks or destroy items.
+Riptide - can now be used while wearing a Sea Crown.
+```
+
+### Additions
+```
+Sea Crown - gives the wearer -2 HP but can be crafted with a potion to give the wearer the effects infinitely with an amplifier of 0. It provides no protection.
+Crystal Spear - charges up its base damage over 2 seconds while charging forward on horseback, capping at 20 damage.
+Echo Dagger - when fueled by an Echo Shard, it will cause all damage and healing to "echo" against the target of choice, halving the amount each time until it fizzles out.
+Elder Guardian Spike - drops from an Elder Guardian, it has a really fast attack speed but low damage and low durability. It pierces protection enchantments, and is used to craft the Sea Crown.
+```
 
 ---
 
