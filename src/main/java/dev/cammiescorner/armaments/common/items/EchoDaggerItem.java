@@ -17,11 +17,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.Vanishable;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class EchoDaggerItem extends Item implements Vanishable {
+	private static final int MAX_CHARGE = 100;
 	private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
 
 	public EchoDaggerItem(Settings settings) {
@@ -31,6 +34,21 @@ public class EchoDaggerItem extends Item implements Vanishable {
 		builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, new EntityAttributeModifier(ATTACK_DAMAGE_MODIFIER_ID, "Weapon modifier", 1, EntityAttributeModifier.Operation.ADDITION));
 		builder.put(EntityAttributes.GENERIC_ATTACK_SPEED, new EntityAttributeModifier(ATTACK_SPEED_MODIFIER_ID, "Weapon modifier", 0, EntityAttributeModifier.Operation.ADDITION));
 		this.attributeModifiers = builder.build();
+	}
+
+	@Override
+	public boolean isItemBarVisible(ItemStack stack) {
+		return true;
+	}
+
+	@Override
+	public int getItemBarStep(ItemStack stack) {
+		return Math.round(13f - (100 - getCharge(stack)) * 13f / MAX_CHARGE);
+	}
+
+	@Override
+	public int getItemBarColor(ItemStack stack) {
+		return 0x009295;
 	}
 
 	@Override
@@ -59,7 +77,7 @@ public class EchoDaggerItem extends Item implements Vanishable {
 
 					if(itemStack.isOf(Items.ECHO_SHARD)) {
 						itemStack.decrement(1);
-						stack.setDamage(0);
+						resetCharge(stack);
 						return TypedActionResult.success(stack, world.isClient);
 					}
 				}
@@ -71,8 +89,8 @@ public class EchoDaggerItem extends Item implements Vanishable {
 
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-		if(entity instanceof PlayerEntity player && isUsable(stack))
-			stack.damage(1, player, e -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+		if(isUsable(stack))
+			decrementCharge(stack);
 	}
 
 	@Override
@@ -86,16 +104,30 @@ public class EchoDaggerItem extends Item implements Vanishable {
 	}
 
 	@Override
-	public void onCraft(ItemStack stack, World world, PlayerEntity player) {
-		stack.setDamage(stack.getMaxDamage() - 1);
-	}
-
-	@Override
 	public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
 		return slot == EquipmentSlot.MAINHAND ? this.attributeModifiers : super.getAttributeModifiers(slot);
 	}
 
 	public static boolean isUsable(ItemStack stack) {
-		return stack.getDamage() < stack.getMaxDamage() - 1;
+		return getCharge(stack) > 0;
+	}
+
+	public static int getCharge(ItemStack stack) {
+		NbtCompound tag = stack.getOrCreateNbt();
+
+		return tag.getInt("Charge");
+	}
+
+	public static void setCharge(ItemStack stack, int value) {
+		NbtCompound tag = stack.getOrCreateNbt();
+		tag.putInt("Charge", MathHelper.clamp(value, 0, MAX_CHARGE));
+	}
+
+	public static void decrementCharge(ItemStack stack) {
+		setCharge(stack, getCharge(stack) - 1);
+	}
+
+	public static void resetCharge(ItemStack stack) {
+		setCharge(stack, MAX_CHARGE);
 	}
 }
