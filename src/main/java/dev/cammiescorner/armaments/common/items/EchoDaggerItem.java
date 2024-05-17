@@ -43,26 +43,29 @@ public class EchoDaggerItem extends Item implements Vanishable {
 
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack stack = user.getStackInHand(hand);
+		ItemStack stack = user.getStackInHand(hand).copy();
 
-		if(!world.isClient() && user.isSneaking()) {
+		if(user.isSneaking()) {
 			if(isUsable(stack)) {
 				user.damage(Armaments.echoDamage(world), 2);
 				user.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 200, 0, true, false, true), user);
-				return TypedActionResult.success(stack);
+				return TypedActionResult.success(stack, world.isClient);
 			}
 			else {
+				if(user.isCreative()) {
+					stack.setDamage(0);
+					return TypedActionResult.success(stack, world.isClient);
+				}
+
 				PlayerInventory inv = user.getInventory();
 
 				for(int i = 0; i < inv.size(); i++) {
 					ItemStack itemStack = inv.getStack(i);
 
 					if(itemStack.isOf(Items.ECHO_SHARD)) {
-						if(!user.isCreative())
-							itemStack.decrement(1);
-
+						itemStack.decrement(1);
 						stack.setDamage(0);
-						return TypedActionResult.success(stack);
+						return TypedActionResult.success(stack, world.isClient);
 					}
 				}
 			}
