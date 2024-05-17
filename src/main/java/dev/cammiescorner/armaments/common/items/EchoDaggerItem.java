@@ -35,8 +35,8 @@ public class EchoDaggerItem extends Item implements Vanishable {
 
 	@Override
 	public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		if(!attacker.getWorld().isClient() && isUsable(stack))
-			target.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 100, 0, true, false, true), attacker);
+		if(!attacker.getWorld().isClient() && (isUsable(stack) || (attacker instanceof PlayerEntity player && player.isCreative())))
+			target.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 300, 0, true, false, true), attacker);
 
 		return true;
 	}
@@ -46,17 +46,12 @@ public class EchoDaggerItem extends Item implements Vanishable {
 		ItemStack stack = user.getStackInHand(hand).copy();
 
 		if(user.isSneaking()) {
-			if(isUsable(stack)) {
+			if(isUsable(stack) || user.isCreative()) {
 				user.damage(Armaments.echoDamage(world), 2);
-				user.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 200, 0, true, false, true), user);
+				user.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 300, 0, true, false, true), user);
 				return TypedActionResult.success(stack, world.isClient);
 			}
 			else {
-				if(user.isCreative()) {
-					stack.setDamage(0);
-					return TypedActionResult.success(stack, world.isClient);
-				}
-
 				PlayerInventory inv = user.getInventory();
 
 				for(int i = 0; i < inv.size(); i++) {

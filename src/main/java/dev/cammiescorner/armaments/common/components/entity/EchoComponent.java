@@ -39,7 +39,7 @@ public class EchoComponent implements ServerTickingComponent {
 			while(iter.hasNext()) {
 				Echo echo = iter.next();
 
-				if(world.getTime() - echo.time() > 40) {
+				if(world.getTime() - echo.time() > 20) {
 					queue.add(echo);
 					iter.remove();
 				}

@@ -5,6 +5,8 @@
 	"item.armaments.echo_dagger": "Echo Dagger",
 	"item.armaments.elder_guardian_spike": "Elder Guardian Spike",
 
+	"effect.armaments.echo": "Echo",
+
 	"death.attack.armaments.echo": "%s died to an Echo",
 	"death.attack.armaments.pokey": "%s was poked to death"
 }

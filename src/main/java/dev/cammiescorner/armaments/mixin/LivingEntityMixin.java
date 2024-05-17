@@ -56,17 +56,18 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(method = "damage", at = @At("HEAD"))
 	private void echoDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-		amount /= 2f;
+		amount *= 0.5f;
 
 		if(amount >= 1) {
 			timeUntilRegen = 0;
 			echo.addEcho(new Echo(Echo.Type.DAMAGE, amount, getWorld().getTime()));
+			timeUntilRegen = 0;
 		}
 	}
 
 	@Inject(method = "heal", at = @At("HEAD"))
 	public void heal(float amount, CallbackInfo info) {
-		amount /= 2f;
+		amount *= 0.5f;
 
 		if(amount >= 1)
 			echo.addEcho(new Echo(Echo.Type.HEAL, amount, getWorld().getTime()));
