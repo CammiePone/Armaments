@@ -47,7 +47,7 @@ public class EchoDaggerItem extends Item implements Vanishable {
 
 		if(!world.isClient() && user.isSneaking()) {
 			if(isUsable(stack)) {
-				user.damage(Armaments.echoDamage(world), 1);
+				user.damage(Armaments.echoDamage(world), 2);
 				user.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 200, 0, true, false, true), user);
 				return TypedActionResult.success(stack);
 			}
