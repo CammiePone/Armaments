@@ -1,0 +1,32 @@
+{
+	"parent": "armaments:item/spear_handheld",
+	"textures": {
+		"layer0": "armaments:item/crystal_spear_charge_0"
+	},
+	"overrides": [
+		{
+			"predicate": {
+				"armaments:charge": 0.25
+			},
+			"model": "armaments:item/crystal_spear_charge_1_handheld"
+		},
+		{
+			"predicate": {
+				"armaments:charge": 0.5
+			},
+			"model": "armaments:item/crystal_spear_charge_2_handheld"
+		},
+		{
+			"predicate": {
+				"armaments:charge": 0.75
+			},
+			"model": "armaments:item/crystal_spear_charge_3_handheld"
+		},
+		{
+			"predicate": {
+				"armaments:charge": 1
+			},
+			"model": "armaments:item/crystal_spear_charge_4_handheld"
+		}
+	]
+}

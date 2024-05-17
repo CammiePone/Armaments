@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "dev.cammiescorner.armaments.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"ItemEntityMixin",
+		"LivingEntityMixin",
+		"TridentEntityMixin",
+		"TridentItemMixin"
+	],
+	"client": [],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

@@ -1,0 +1,6 @@
+{
+	"parent": "armaments:item/spear_handheld",
+	"textures": {
+		"layer0": "armaments:item/crystal_spear_charge_2"
+	}
+}

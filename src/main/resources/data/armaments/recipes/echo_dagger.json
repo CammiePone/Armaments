@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"E",
+		"S"
+	],
+	"key": {
+		"E": {
+			"item": "minecraft:echo_shard"
+		},
+		"S": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "armaments:echo_dagger"
+	}
+}
