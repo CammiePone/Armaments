@@ -18,7 +18,7 @@ public class ModItems {
 	public static final RegistrySupplier<Item> SEA_CROWN = ITEMS.register("sea_crown", () -> new SeaCrownItem(new QuiltItemSettings()));
 	public static final RegistrySupplier<Item> CRYSTAL_SPEAR = ITEMS.register("crystal_spear", () -> new CrystalSpearItem(ToolMaterials.AMETHYST, new QuiltItemSettings()));
 //	public static final RegistrySupplier<Item> BLUNDERBUSS = ITEMS.register("blunderbuss", () -> new BlunderbussItem(new QuiltItemSettings().maxCount(1)));
-	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new QuiltItemSettings().maxDamage(400)));
+	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new QuiltItemSettings().maxDamage(100)));
 //	public static final RegistrySupplier<Item> COPPER_GAUNTLET = ITEMS.register("copper_gauntlet", () -> new CopperGauntletItem(new QuiltItemSettings().maxCount(1)));
 	public static final RegistrySupplier<Item> ELDER_GUARDIAN_SPIKE = ITEMS.register("elder_guardian_spike", () -> new ElderGuardianSpikeItem(new QuiltItemSettings().maxDamage(64)));
 
