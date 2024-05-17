@@ -3,6 +3,8 @@
 	"item.armaments.crystal_spear": "Crystal Spear",
 	"item.armaments.blunderbuss": "Blunderbuss",
 	"item.armaments.echo_dagger": "Echo Dagger",
+	"item.armaments.elder_guardian_spike": "Elder Guardian Spike",
 
-	"death.attack.armaments.echo": "%s died to an Echo"
+	"death.attack.armaments.echo": "%s died to an Echo",
+	"death.attack.armaments.pokey": "%s was poked to death"
 }

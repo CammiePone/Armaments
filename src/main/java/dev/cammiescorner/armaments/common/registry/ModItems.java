@@ -20,6 +20,7 @@ public class ModItems {
 	public static final RegistrySupplier<Item> BLUNDERBUSS = ITEMS.register("blunderbuss", () -> new BlunderbussItem(new QuiltItemSettings().maxCount(1)));
 	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new QuiltItemSettings().maxDamage(400)));
 	public static final RegistrySupplier<Item> COPPER_GAUNTLET = ITEMS.register("copper_gauntlet", () -> new CopperGauntletItem(new QuiltItemSettings().maxCount(1)));
+	public static final RegistrySupplier<Item> ELDER_GUARDIAN_SPIKE = ITEMS.register("elder_guardian_spike", () -> new ElderGuardianSpikeItem(new QuiltItemSettings().maxDamage(64)));
 
 	public enum ToolMaterials implements ToolMaterial {
 		AMETHYST(1, 193, 5f, 7f, 22, () -> Ingredient.ofItems(Items.AMETHYST_SHARD));

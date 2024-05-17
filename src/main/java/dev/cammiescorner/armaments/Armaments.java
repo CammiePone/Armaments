@@ -6,6 +6,7 @@ import dev.cammiescorner.armaments.common.registry.*;
 import dev.upcraft.sparkweave.api.registry.RegistryService;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
@@ -17,6 +18,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -40,6 +43,8 @@ public class Armaments implements ModInitializer {
 	public static final String MOD_ID = "armaments";
 	public static final Logger LOGGER = LoggerFactory.getLogger("Armaments");
 	public static final RegistryKey<DamageType> ECHO = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("echo"));
+	public static final RegistryKey<DamageType> POKEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("pokey"));
+	public static final Identifier ELDER_GUARDIAN = new Identifier("entities/elder_guardian");
 
 	@Override
 	public void onInitialize(ModContainer mod) {
@@ -52,7 +57,17 @@ public class Armaments implements ModInitializer {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {
 			entries.addAfter(Items.TURTLE_HELMET, ModItems.SEA_CROWN.get());
 			entries.addAfter(Items.TRIDENT, ModItems.CRYSTAL_SPEAR.get(), ModItems.ECHO_DAGGER.get());
-			entries.addAfter(Items.CROSSBOW, ModItems.BLUNDERBUSS.get());
+//			entries.addAfter(Items.CROSSBOW, ModItems.BLUNDERBUSS.get());
+		});
+
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.addAfter(Items.GHAST_TEAR, ModItems.ELDER_GUARDIAN_SPIKE.get()));
+
+		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+			if(source.isBuiltin() && ELDER_GUARDIAN.equals(id)) {
+				LootPool.Builder builder = LootPool.builder().with(ItemEntry.builder(ModItems.ELDER_GUARDIAN_SPIKE.get()));
+
+				tableBuilder.pool(builder);
+			}
 		});
 
 		UseItemCallback.EVENT.register((player, world, hand) -> {
@@ -138,11 +153,15 @@ public class Armaments implements ModInitializer {
 		return prefix != null ? (prefix + "." + translationKey) : translationKey;
 	}
 
-	public static Holder<DamageType> echo(World world) {
-		return world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).getHolderOrThrow(Armaments.ECHO);
+	public static Holder<DamageType> getDamageTypeHolder(World world, RegistryKey<DamageType> key) {
+		return world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).getHolderOrThrow(key);
 	}
 
 	public static DamageSource echoDamage(World world) {
-		return new DamageSource(echo(world));
+		return new DamageSource(getDamageTypeHolder(world, Armaments.ECHO));
+	}
+
+	public static DamageSource pokeyDamage(World world) {
+		return new DamageSource(getDamageTypeHolder(world, Armaments.POKEY));
 	}
 }

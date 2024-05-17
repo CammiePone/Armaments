@@ -1,0 +1,18 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"SSS",
+		"PPP"
+	],
+	"key": {
+		"P": {
+			"item": "minecraft:prismarine_shard"
+		},
+		"S": {
+			"item": "armaments:elder_guardian_spike"
+		}
+	},
+	"result": {
+		"item": "armaments:sea_crown"
+	}
+}

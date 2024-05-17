@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -41,8 +42,14 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@ModifyVariable(method = "damage", at = @At("HEAD"), argsOnly = true)
 	private DamageSource changeEchoDaggerDamage(DamageSource source) {
-		if(!source.isIndirect() && source.getAttacker() instanceof LivingEntity attacker && attacker.getMainHandStack().isOf(ModItems.ECHO_DAGGER.get()))
-			return Armaments.echoDamage(getWorld());
+		if(!source.isIndirect() && source.getSource() instanceof LivingEntity attacker) {
+			ItemStack stack = attacker.getMainHandStack();
+
+			if(stack.isOf(ModItems.ECHO_DAGGER.get()))
+				return Armaments.echoDamage(getWorld());
+			if(stack.isOf(ModItems.ELDER_GUARDIAN_SPIKE.get()))
+				return Armaments.pokeyDamage(getWorld());
+		}
 
 		return source;
 	}
