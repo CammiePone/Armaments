@@ -7,6 +7,7 @@ import dev.upcraft.sparkweave.api.registry.RegistryService;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
@@ -161,7 +162,7 @@ public class Armaments implements ModInitializer {
 		return new DamageSource(getDamageTypeHolder(world, Armaments.ECHO));
 	}
 
-	public static DamageSource pokeyDamage(World world) {
-		return new DamageSource(getDamageTypeHolder(world, Armaments.POKEY));
+	public static DamageSource pokeyDamage(World world, Entity source) {
+		return new DamageSource(getDamageTypeHolder(world, Armaments.POKEY), source);
 	}
 }

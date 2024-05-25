@@ -8,5 +8,7 @@
 	"effect.armaments.echo": "Echo",
 
 	"death.attack.armaments.echo": "%s died to an Echo",
-	"death.attack.armaments.pokey": "%s was poked to death"
+	"death.attack.armaments.echo.player": "%s died to an Echo whilst fighting %s",
+	"death.attack.armaments.pokey": "%s was poked to death by %s",
+	"death.attack.armaments.pokey.item": "%s was poked to death by %s using %s"
 }
