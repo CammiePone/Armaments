@@ -12,7 +12,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mixin(LightningEntity.class)
 public abstract class LightningEntityMixin {
@@ -26,6 +28,6 @@ public abstract class LightningEntityMixin {
 
 	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getOtherEntities(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;)Ljava/util/List;"))
 	private List<Entity> dontStrikeItems(List<Entity> original) {
-		return getChanneler() != null ? original.stream().filter(entity -> !(entity instanceof ItemEntity)).toList() : original;
+		return getChanneler() != null ? original.stream().filter(entity -> !(entity instanceof ItemEntity)).collect(Collectors.toCollection(ArrayList::new)) : original;
 	}
 }
