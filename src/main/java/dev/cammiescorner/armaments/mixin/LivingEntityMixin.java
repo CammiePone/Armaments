@@ -58,7 +58,7 @@ public abstract class LivingEntityMixin extends Entity {
 	private void echoDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
 		amount *= 0.5f;
 
-		if(amount >= 1) {
+		if(amount >= 1 && source.isType(Armaments.ECHO)) {
 			timeUntilRegen = 0;
 			echo.addEcho(new Echo(Echo.Type.DAMAGE, amount, getWorld().getTime()));
 			timeUntilRegen = 0;
