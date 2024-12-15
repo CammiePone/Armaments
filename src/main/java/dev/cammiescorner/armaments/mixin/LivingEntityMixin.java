@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
+
 	@Unique private final EchoComponent echo = getComponent(ModComponents.ECHO);
 
 	public LivingEntityMixin(EntityType<?> variant, World world) {
@@ -48,7 +49,7 @@ public abstract class LivingEntityMixin extends Entity {
 			if(stack.isOf(ModItems.ECHO_DAGGER.get()))
 				return Armaments.echoDamage(getWorld());
 			if(stack.isOf(ModItems.ELDER_GUARDIAN_SPIKE.get()))
-				return Armaments.pokeyDamage(getWorld());
+				return Armaments.pokeyDamage(getWorld(), source.getSource());
 		}
 
 		return source;
