@@ -21,7 +21,8 @@
 		"entrypoints": {
 			"init": "dev.cammiescorner.armaments.Armaments",
 			"client_init": "dev.cammiescorner.armaments.client.ArmamentsClient",
-			"cardinal-components": "dev.cammiescorner.armaments.common.registry.ModComponents"
+			"cardinal-components": "dev.cammiescorner.armaments.common.registry.ModComponents",
+			"modmenu": "dev.cammiescorner.armaments.common.compat.ModMenuCompat"
 		},
 		"depends": [
 			{

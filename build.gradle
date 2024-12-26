@@ -29,6 +29,10 @@ repositories {
 		url = "https://maven.uuid.gg/releases"
 	}
 	maven {
+		name = "Team Resourceful"
+		url = "https://nexus.resourcefulbees.com/repository/maven-public/"
+	}
+	maven {
 		name = "Ladysnake"
 		url = "https://maven.ladysnake.org/releases"
 	}
@@ -47,11 +51,14 @@ dependencies {
 	modImplementation libs.quilt.loader
 
 	modImplementation libs.quilted.fabric.api
+	modImplementation libs.resourceful.config
 	modImplementation libs.bundles.cca
 
 	modImplementation (libs.sparkweave) {
 		exclude(group: "io.github.llamalad7")
 	}
+
+	modImplementation libs.modmenu
 }
 
 processResources {

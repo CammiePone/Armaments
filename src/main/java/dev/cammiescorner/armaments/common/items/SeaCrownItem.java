@@ -2,6 +2,7 @@ package dev.cammiescorner.armaments.common.items;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import dev.cammiescorner.armaments.ArmamentsConfig;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -46,7 +47,7 @@ public class SeaCrownItem extends ArmorItem implements Equippable {
 			Potion potion = PotionUtil.getPotion(stack);
 
 			for(StatusEffectInstance effect : potion.getEffects())
-				wearer.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), 100, 0, true, false, true));
+				wearer.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), 100, ArmamentsConfig.SeaCrown.potionAmplifier, true, false, true));
 
 			if(wearer instanceof ServerPlayerEntity player)
 				player.markHealthDirty();

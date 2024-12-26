@@ -2,6 +2,7 @@ package dev.cammiescorner.armaments.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import dev.cammiescorner.armaments.Armaments;
+import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.components.entity.EchoComponent;
 import dev.cammiescorner.armaments.common.echos.Echo;
 import dev.cammiescorner.armaments.common.registry.ModComponents;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-
 	@Unique private final EchoComponent echo = getComponent(ModComponents.ECHO);
 
 	public LivingEntityMixin(EntityType<?> variant, World world) {
@@ -57,7 +57,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(method = "damage", at = @At("HEAD"))
 	private void echoDamage(DamageSource source, float amount, CallbackInfoReturnable<Boolean> info) {
-		amount *= 0.5f;
+		amount *= ArmamentsConfig.EchoDagger.echoMultiplier;
 
 		if(amount >= 1 && source.isType(Armaments.ECHO)) {
 			timeUntilRegen = 0;
@@ -68,7 +68,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(method = "heal", at = @At("HEAD"))
 	public void heal(float amount, CallbackInfo info) {
-		amount *= 0.5f;
+		amount *= ArmamentsConfig.EchoDagger.echoMultiplier;
 
 		if(amount >= 1)
 			echo.addEcho(new Echo(Echo.Type.HEAL, amount, getWorld().getTime()));

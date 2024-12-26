@@ -1,6 +1,7 @@
 package dev.cammiescorner.armaments.common.components.entity;
 
 import dev.cammiescorner.armaments.Armaments;
+import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.echos.Echo;
 import dev.cammiescorner.armaments.common.registry.ModStatusEffects;
 import dev.onyxstudios.cca.api.v3.component.tick.ServerTickingComponent;
@@ -39,7 +40,7 @@ public class EchoComponent implements ServerTickingComponent {
 			while(iter.hasNext()) {
 				Echo echo = iter.next();
 
-				if(world.getTime() - echo.time() > 20) {
+				if(world.getTime() - echo.time() > ArmamentsConfig.EchoDagger.echoDelay) {
 					queue.add(echo);
 					iter.remove();
 				}

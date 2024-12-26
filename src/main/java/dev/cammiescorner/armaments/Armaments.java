@@ -1,5 +1,6 @@
 package dev.cammiescorner.armaments;
 
+import com.teamresourceful.resourcefulconfig.common.config.Configurator;
 import dev.cammiescorner.armaments.common.components.item.CrystalSpearComponent;
 import dev.cammiescorner.armaments.common.items.CrystalSpearItem;
 import dev.cammiescorner.armaments.common.registry.*;
@@ -46,10 +47,12 @@ public class Armaments implements ModInitializer {
 	public static final RegistryKey<DamageType> ECHO = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("echo"));
 	public static final RegistryKey<DamageType> POKEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("pokey"));
 	public static final Identifier ELDER_GUARDIAN = new Identifier("entities/elder_guardian");
+	public static final Configurator configurator = new Configurator();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		RegistryService registryService = RegistryService.get();
+		configurator.registerConfig(ArmamentsConfig.class);
 
 		ModItems.ITEMS.accept(registryService);
 		ModRecipes.RECIPE_SERIALIZERS.accept(registryService);
@@ -75,8 +78,8 @@ public class Armaments implements ModInitializer {
 			ItemStack stack = player.getStackInHand(hand);
 
 			if(stack.isIn(ModTags.HORNS) && player.getVehicle() instanceof HorseBaseEntity honse) {
-				honse.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 600, 1, true, false));
-				honse.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 300, 0, true, false));
+				honse.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, ArmamentsConfig.GoatHorn.speedDuration, ArmamentsConfig.GoatHorn.speedAmplifier, true, false));
+				honse.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, ArmamentsConfig.GoatHorn.resistanceDuration, ArmamentsConfig.GoatHorn.resistanceAmplifier, true, false));
 			}
 
 			return TypedActionResult.pass(stack);
@@ -88,7 +91,7 @@ public class Armaments implements ModInitializer {
 					ItemStack stack = rider.getMainHandStack();
 					CrystalSpearComponent component = ModComponents.CRYSTAL_SPEAR.get(stack);
 					long timer = world.getTime() - component.startTime();
-					int interval = 40;
+					int interval = ArmamentsConfig.CrystalSpear.chargeInterval;
 
 					if(rider.forwardSpeed > 0) {
 						if(component.getCharge() == 0 && component.startTime() + interval < world.getTime())

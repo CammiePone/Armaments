@@ -3,6 +3,7 @@ package dev.cammiescorner.armaments.common.items;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import dev.cammiescorner.armaments.Armaments;
+import dev.cammiescorner.armaments.ArmamentsConfig;
 import dev.cammiescorner.armaments.common.registry.ModStatusEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
@@ -54,7 +55,7 @@ public class EchoDaggerItem extends Item implements Vanishable {
 	@Override
 	public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if(!attacker.getWorld().isClient() && (isUsable(stack) || (attacker instanceof PlayerEntity player && player.isCreative())))
-			target.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 300, 0, true, false, true), attacker);
+			target.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), ArmamentsConfig.EchoDagger.potionDuration, 0, true, false, true), attacker);
 
 		return true;
 	}
@@ -66,7 +67,7 @@ public class EchoDaggerItem extends Item implements Vanishable {
 		if(user.isSneaking()) {
 			if(isUsable(stack) || user.isCreative()) {
 				user.damage(Armaments.echoDamage(world), 2);
-				user.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), 300, 0, true, false, true), user);
+				user.addStatusEffect(new StatusEffectInstance(ModStatusEffects.ECHO.get(), ArmamentsConfig.EchoDagger.potionDuration, 0, true, false, true), user);
 				return TypedActionResult.success(stack, world.isClient);
 			}
 			else {

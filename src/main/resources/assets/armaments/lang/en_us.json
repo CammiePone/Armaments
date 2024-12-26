@@ -10,5 +10,20 @@
 	"death.attack.armaments.echo": "%s died to an Echo",
 	"death.attack.armaments.echo.player": "%s died to an Echo whilst fighting %s",
 	"death.attack.armaments.pokey": "%s was poked to death by %s",
-	"death.attack.armaments.pokey.item": "%s was poked to death by %s using %s"
+	"death.attack.armaments.pokey.item": "%s was poked to death by %s using %s",
+
+	"config.armaments.sea_crown": "Sea Crown Settings",
+	"config.armaments.sea_crown.enables_riptide": "Allows Riptide out of water",
+	"config.armaments.sea_crown.potion_amplifier": "Potion Amplifier",
+	"config.armaments.echo_dagger": "Echo Dagger Settings",
+	"config.armaments.echo_dagger.echo_multiplier": "Echo reduction multiplier",
+	"config.armaments.echo_dagger.echo_delay": "Delay before an echo hits",
+	"config.armaments.echo_dagger.potion_duration": "Echo potion effect duration",
+	"config.armaments.crystal_spear": "Crystal Spear Settings",
+	"config.armaments.crystal_spear.charge_interval": "Interval to gain one charge",
+	"config.armaments.goat_horn": "Goat Horn Settings",
+	"config.armaments.goat_horn.speed_duration": "Speed effect duration",
+	"config.armaments.goat_horn.speed_amplifier": "Speed effect amplifier",
+	"config.armaments.goat_horn.resistance_duration": "Resistance effect duration",
+	"config.armaments.goat_horn.resistance_amplifier": "Resistance effect amplifier"
 }
