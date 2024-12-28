@@ -6,6 +6,7 @@ classes/
 
 # Quilt Loom
 remappedSrc/
+oldSrc/
 run/
 
 # Eclipse

@@ -1,0 +1,72 @@
+{
+	"schemaVersion": 1,
+	"id": "armaments",
+	"version": "${version}",
+	"name": "Armaments",
+	"description": "A variety of new weapons and tools with their own unique functions",
+	"authors": [
+		"Cammie"
+	],
+	"contact": {
+		"homepage": "https://cammiescorner.dev/",
+		"issues": "https://github.com/CammiePone/Armaments/issues",
+		"sources": "https://github.com/CammiePone/Armaments",
+		"discord": "https://cammiescorner.dev/discord"
+	},
+	"license": "https://github.com/CammiePone/Armaments/blob/HEAD/LICENSE.md",
+	"icon": "assets/armaments/icon.png",
+	"environment": "*",
+	"custom": {
+		"mc-publish": {
+			"curseforge": "1016786",
+			"modrinth": "TcsJ2F6w",
+			"dependencies": [
+				"fabric-api(required)#{curseforge:306612}{modrinth:P7dR8mSH}",
+				"resourcefulconfig(required)#{modrinth:M1953qlQ}{curseforge:714059}",
+				"sparkweave(required)#{modrinth:nf68xfAw}{curseforge:911456}",
+				"cardinal-components-api(required)#{modrinth:K01OU20C}{curseforge:318449}"
+			],
+			"loaders": [
+				"fabric",
+				"quilt"
+			]
+		},
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://cammiescorner.dev/discord"
+			}
+		},
+		"cardinal-components": [
+			"armaments:crystal_spear",
+			"armaments:echo"
+		]
+	},
+	"entrypoints": {
+		"main": [
+			"dev.cammiescorner.armaments.Armaments"
+		],
+		"client": [
+			"dev.cammiescorner.armaments.client.ArmamentsClient"
+		],
+		"cardinal-components": [
+			"dev.cammiescorner.armaments.common.registry.ModComponents"
+		],
+		"modmenu": [
+			"dev.cammiescorner.armaments.common.compat.ModMenuCompat"
+		]
+	},
+	"mixins": [
+		"armaments.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "=1.20.1",
+		"java": ">=17",
+		"fabric-api": "*",
+		"sparkweave": ">=0.5.0 <0.100.0",
+		"resourcefulconfig": "*",
+		"cardinal-components-base": "*",
+		"cardinal-components-item": "*",
+		"cardinal-components-entity": "*"
+	}
+}

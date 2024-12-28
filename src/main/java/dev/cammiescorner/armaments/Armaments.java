@@ -1,56 +1,48 @@
 package dev.cammiescorner.armaments;
 
 import com.teamresourceful.resourcefulconfig.common.config.Configurator;
-import dev.cammiescorner.armaments.common.components.item.CrystalSpearComponent;
-import dev.cammiescorner.armaments.common.items.CrystalSpearItem;
-import dev.cammiescorner.armaments.common.registry.*;
+import dev.cammiescorner.armaments.common.registry.ModItems;
+import dev.cammiescorner.armaments.common.registry.ModRecipes;
+import dev.cammiescorner.armaments.common.registry.ModStatusEffects;
+import dev.cammiescorner.armaments.common.registry.ModTags;
 import dev.upcraft.sparkweave.api.registry.RegistryService;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.passive.HorseBaseEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.registry.Holder;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
 import org.jetbrains.annotations.Nullable;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-import org.quiltmc.qsl.entity.event.api.ServerEntityTickCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Armaments implements ModInitializer {
 	public static final String MOD_ID = "armaments";
 	public static final Logger LOGGER = LoggerFactory.getLogger("Armaments");
-	public static final RegistryKey<DamageType> ECHO = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("echo"));
-	public static final RegistryKey<DamageType> POKEY = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, id("pokey"));
-	public static final Identifier ELDER_GUARDIAN = new Identifier("entities/elder_guardian");
+	public static final ResourceKey<DamageType> ECHO = ResourceKey.create(Registries.DAMAGE_TYPE, id("echo"));
+	public static final ResourceKey<DamageType> POKEY = ResourceKey.create(Registries.DAMAGE_TYPE, id("pokey"));
+	public static final ResourceLocation ELDER_GUARDIAN = new ResourceLocation("entities/elder_guardian");
 	public static final Configurator configurator = new Configurator();
 
 	@Override
-	public void onInitialize(ModContainer mod) {
+	public void onInitialize() {
 		RegistryService registryService = RegistryService.get();
 		configurator.registerConfig(ArmamentsConfig.class);
 
@@ -58,98 +50,40 @@ public class Armaments implements ModInitializer {
 		ModRecipes.RECIPE_SERIALIZERS.accept(registryService);
 		ModStatusEffects.STATUS_EFFECTS.accept(registryService);
 
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(entries -> {
+		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.COMBAT).register(entries -> {
 			entries.addAfter(Items.TURTLE_HELMET, ModItems.SEA_CROWN.get());
 			entries.addAfter(Items.TRIDENT, ModItems.CRYSTAL_SPEAR.get(), ModItems.ECHO_DAGGER.get(), ModItems.ELDER_GUARDIAN_SPIKE.get());
 //			entries.addAfter(Items.CROSSBOW, ModItems.BLUNDERBUSS.get());
 		});
 
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.addAfter(Items.GHAST_TEAR, ModItems.ELDER_GUARDIAN_SPIKE.get()));
+		ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.INGREDIENTS).register(entries -> entries.addAfter(Items.GHAST_TEAR, ModItems.ELDER_GUARDIAN_SPIKE.get()));
 
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if(source.isBuiltin() && ELDER_GUARDIAN.equals(id)) {
-				LootPool.Builder builder = LootPool.builder().with(ItemEntry.builder(ModItems.ELDER_GUARDIAN_SPIKE.get()));
+				LootPool.Builder builder = LootPool.lootPool().add(LootItem.lootTableItem(ModItems.ELDER_GUARDIAN_SPIKE.get()));
 
-				tableBuilder.pool(builder);
+				tableBuilder.withPool(builder);
 			}
 		});
 
 		UseItemCallback.EVENT.register((player, world, hand) -> {
-			ItemStack stack = player.getStackInHand(hand);
+			ItemStack stack = player.getItemInHand(hand);
 
-			if(stack.isIn(ModTags.HORNS) && player.getVehicle() instanceof HorseBaseEntity honse) {
-				honse.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, ArmamentsConfig.GoatHorn.speedDuration, ArmamentsConfig.GoatHorn.speedAmplifier, true, false));
-				honse.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, ArmamentsConfig.GoatHorn.resistanceDuration, ArmamentsConfig.GoatHorn.resistanceAmplifier, true, false));
+			if(stack.is(ModTags.HORNS) && player.getVehicle() instanceof AbstractHorse honse) {
+				honse.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, ArmamentsConfig.GoatHorn.speedDuration, ArmamentsConfig.GoatHorn.speedAmplifier, true, false));
+				honse.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, ArmamentsConfig.GoatHorn.resistanceDuration, ArmamentsConfig.GoatHorn.resistanceAmplifier, true, false));
 			}
 
-			return TypedActionResult.pass(stack);
-		});
-
-		ServerEntityTickCallback.EVENT.register((entity, isPassengerTick) -> {
-			if(entity.getWorld() instanceof ServerWorld world && entity instanceof LivingEntity rider) {
-				if(rider.getMainHandStack().getItem() instanceof CrystalSpearItem && rider.hasVehicle() && rider.getControlledVehicle() instanceof HorseBaseEntity) {
-					ItemStack stack = rider.getMainHandStack();
-					CrystalSpearComponent component = ModComponents.CRYSTAL_SPEAR.get(stack);
-					long timer = world.getTime() - component.startTime();
-					int interval = ArmamentsConfig.CrystalSpear.chargeInterval;
-
-					if(rider.forwardSpeed > 0) {
-						if(component.getCharge() == 0 && component.startTime() + interval < world.getTime())
-							component.setStartTime(world.getTime());
-
-						if(timer % interval == 0 && component.getCharge() < 4) {
-							component.setCharge(component.getCharge() + 1);
-							world.playSound(null, rider.getX(), rider.getY(), rider.getZ(), SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.NEUTRAL, 1f, component.getCharge() / 4f);
-
-							if(rider instanceof PlayerEntity player) {
-								String charge = "⬤";
-								String bar = "◯";
-
-								Formatting formatting = switch(component.getCharge()) {
-									default -> Formatting.RED;
-									case 2 -> Formatting.GOLD;
-									case 3 -> Formatting.YELLOW;
-									case 4 -> Formatting.GREEN;
-								};
-
-								player.sendMessage(Text.of(charge.repeat(component.getCharge()) + bar.repeat(4 - component.getCharge())).copy().formatted(formatting), true);
-							}
-						}
-					}
-					else if(component.getCharge() > 0) {
-						component.setCharge(0);
-						world.playSound(null, rider.getX(), rider.getY(), rider.getZ(), SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.NEUTRAL, 1f, 0f);
-
-						if(rider instanceof PlayerEntity player)
-							player.sendMessage(Text.of("◯◯◯◯").copy().formatted(Formatting.DARK_RED), true);
-					}
-				}
-
-				if(rider instanceof PlayerEntity player) {
-					PlayerInventory inv = player.getInventory();
-
-					for(int i = 0; i < inv.size(); i++) {
-						ItemStack stack = inv.getStack(i);
-
-						if(!(stack.getItem() instanceof CrystalSpearItem))
-							continue;
-
-						CrystalSpearComponent component = ModComponents.CRYSTAL_SPEAR.get(stack);
-
-						if((!player.getMainHandStack().equals(stack) || !player.hasVehicle()) && component.getCharge() > 0)
-							component.setCharge(0);
-					}
-				}
-			}
+			return InteractionResultHolder.pass(stack);
 		});
 	}
 
-	public static Identifier id(String name) {
-		return new Identifier(MOD_ID, name);
+	public static ResourceLocation id(String name) {
+		return new ResourceLocation(MOD_ID, name);
 	}
 
-	public static MutableText translate(@Nullable String prefix, String... value) {
-		return Text.translatable(translationKey(prefix, value));
+	public static MutableComponent translate(@Nullable String prefix, String... value) {
+		return Component.translatable(translationKey(prefix, value));
 	}
 
 	public static String translationKey(@Nullable String prefix, String... value) {
@@ -157,15 +91,15 @@ public class Armaments implements ModInitializer {
 		return prefix != null ? (prefix + "." + translationKey) : translationKey;
 	}
 
-	public static Holder<DamageType> getDamageTypeHolder(World world, RegistryKey<DamageType> key) {
-		return world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).getHolderOrThrow(key);
+	public static Holder<DamageType> getDamageTypeHolder(Level world, ResourceKey<DamageType> key) {
+		return world.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key);
 	}
 
-	public static DamageSource echoDamage(World world) {
+	public static DamageSource echoDamage(Level world) {
 		return new DamageSource(getDamageTypeHolder(world, Armaments.ECHO));
 	}
 
-	public static DamageSource pokeyDamage(World world, Entity source) {
+	public static DamageSource pokeyDamage(Level world, Entity source) {
 		return new DamageSource(getDamageTypeHolder(world, Armaments.POKEY), source);
 	}
 }

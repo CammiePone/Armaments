@@ -3,72 +3,76 @@ package dev.cammiescorner.armaments.common.items;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import dev.cammiescorner.armaments.ArmamentsConfig;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.*;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtil;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Equipable;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
-public class SeaCrownItem extends ArmorItem implements Equippable {
+public class SeaCrownItem extends ArmorItem implements Equipable {
 	private static final UUID HP_REDUCTION = UUID.fromString("1ed2ecfe-4ba3-4137-a110-dcb9db597d89");
-	private final Multimap<EntityAttribute, EntityAttributeModifier> attributeModifiers;
+	private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
-	public SeaCrownItem(Settings settings) {
-		super(ArmorMaterials.TURTLE, ArmorSlot.HELMET, settings);
+	public SeaCrownItem(Properties settings) {
+		super(ArmorMaterials.TURTLE, Type.HELMET, settings);
 
-		ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-		builder.put(EntityAttributes.GENERIC_MAX_HEALTH, new EntityAttributeModifier(HP_REDUCTION, "Crown modifier", -2, EntityAttributeModifier.Operation.ADDITION));
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+		builder.put(Attributes.MAX_HEALTH, new AttributeModifier(HP_REDUCTION, "Crown modifier", -2, AttributeModifier.Operation.ADDITION));
 		this.attributeModifiers = builder.build();
 	}
 
 	@Override
-	public boolean canRepair(ItemStack stack, ItemStack ingredient) {
-		return ingredient.isOf(Items.PRISMARINE_SHARD);
+	public boolean isValidRepairItem(ItemStack stack, ItemStack ingredient) {
+		return ingredient.is(Items.PRISMARINE_SHARD);
 	}
 
 	@Override
-	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
-		if(entity instanceof LivingEntity wearer && wearer.getEquippedStack(EquipmentSlot.HEAD) == stack) {
-			Potion potion = PotionUtil.getPotion(stack);
+	public void inventoryTick(ItemStack stack, Level world, Entity entity, int slot, boolean selected) {
+		if(entity instanceof LivingEntity wearer && wearer.getItemBySlot(EquipmentSlot.HEAD) == stack) {
+			Potion potion = PotionUtils.getPotion(stack);
 
-			for(StatusEffectInstance effect : potion.getEffects())
-				wearer.addStatusEffect(new StatusEffectInstance(effect.getEffectType(), 100, ArmamentsConfig.SeaCrown.potionAmplifier, true, false, true));
+			for(MobEffectInstance effect : potion.getEffects())
+				wearer.addEffect(new MobEffectInstance(effect.getEffect(), 100, ArmamentsConfig.SeaCrown.potionAmplifier, true, false, true));
 
-			if(wearer instanceof ServerPlayerEntity player)
-				player.markHealthDirty();
+			if(wearer instanceof ServerPlayer player)
+				player.resetSentInfo();
 		}
 	}
 
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-		NbtCompound tag = stack.getNbt();
+	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag context) {
+		CompoundTag tag = stack.getTag();
 
 		if(tag == null)
 			return;
 
-		Potion potion = Potion.byId(tag.getString("Potion"));
+		Potion potion = Potion.byName(tag.getString("Potion"));
 
-		for(StatusEffectInstance effect : potion.getEffects())
-			tooltip.add(Text.translatable(effect.getTranslationKey()).formatted(effect.getEffectType().isBeneficial() ? Formatting.BLUE : Formatting.RED));
+		for(MobEffectInstance effect : potion.getEffects())
+			tooltip.add(Component.translatable(effect.getDescriptionId()).withStyle(effect.getEffect().isBeneficial() ? ChatFormatting.BLUE : ChatFormatting.RED));
 	}
 
 	@Override
-	public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-		return slot == EquipmentSlot.HEAD ? this.attributeModifiers : super.getAttributeModifiers(slot);
+	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
+		return slot == EquipmentSlot.HEAD ? this.attributeModifiers : super.getDefaultAttributeModifiers(slot);
 	}
 }

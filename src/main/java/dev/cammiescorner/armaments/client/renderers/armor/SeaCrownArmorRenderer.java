@@ -1,34 +1,34 @@
 package dev.cammiescorner.armaments.client.renderers.armor;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.client.models.armor.SeaCrownArmorModel;
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 public class SeaCrownArmorRenderer implements ArmorRenderer {
-	private static final Identifier TEXTURE = Armaments.id("textures/entity/armor/sea_crown.png");
-	private final MinecraftClient client = MinecraftClient.getInstance();
+	private static final ResourceLocation TEXTURE = Armaments.id("textures/entity/armor/sea_crown.png");
+	private final Minecraft client = Minecraft.getInstance();
 	private SeaCrownArmorModel<LivingEntity> model;
 
 	@Override
-	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
+	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, ItemStack stack, LivingEntity entity, EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
 		if(model == null)
-			model = new SeaCrownArmorModel<>(client.getEntityModelLoader().getModelPart(SeaCrownArmorModel.MODEL_LAYER));
+			model = new SeaCrownArmorModel<>(client.getEntityModels().bakeLayer(SeaCrownArmorModel.MODEL_LAYER));
 
-		contextModel.setAttributes(model);
-		model.setVisible(true);
+		contextModel.copyPropertiesTo(model);
+		model.setAllVisible(true);
 		model.crown.visible = slot == EquipmentSlot.HEAD;
 
-		model.render(matrices, ItemRenderer.getArmorGlintConsumer(vertexConsumers, RenderLayer.getArmorCutoutNoCull(TEXTURE), false, true), light, OverlayTexture.DEFAULT_UV, 1f, 1f, 1f, 1f);
+		model.renderToBuffer(matrices, ItemRenderer.getArmorFoilBuffer(vertexConsumers, RenderType.armorCutoutNoCull(TEXTURE), false, true), light, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
 	}
 }

@@ -1,21 +1,21 @@
 package dev.cammiescorner.armaments.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.TridentEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(TridentEntity.class)
+@Mixin(ThrownTrident.class)
 public abstract class TridentEntityMixin extends Entity {
-	public TridentEntityMixin(EntityType<?> variant, World world) {
+	public TridentEntityMixin(EntityType<?> variant, Level world) {
 		super(variant, world);
 	}
 
-	@ModifyExpressionValue(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isThundering()Z"))
+	@ModifyExpressionValue(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isThundering()Z"))
 	private boolean lightningInRain(boolean original) {
-		return original || getWorld().isRaining();
+		return original || level().isRaining();
 	}
 }

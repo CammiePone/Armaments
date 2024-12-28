@@ -1,7 +1,7 @@
 package dev.cammiescorner.armaments.common.components.item;
 
 import dev.onyxstudios.cca.api.v3.item.ItemComponent;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class CrystalSpearComponent extends ItemComponent {
 	public CrystalSpearComponent(ItemStack stack) {

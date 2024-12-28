@@ -4,33 +4,35 @@ import dev.cammiescorner.armaments.Armaments;
 import dev.cammiescorner.armaments.common.items.*;
 import dev.upcraft.sparkweave.api.registry.RegistryHandler;
 import dev.upcraft.sparkweave.api.registry.RegistrySupplier;
-import net.minecraft.item.*;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Lazy;
-import org.quiltmc.qsl.item.setting.api.QuiltItemSettings;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.function.Supplier;
 
 public class ModItems {
-	public static final RegistryHandler<Item> ITEMS = RegistryHandler.create(RegistryKeys.ITEM, Armaments.MOD_ID);
+	public static final RegistryHandler<Item> ITEMS = RegistryHandler.create(Registries.ITEM, Armaments.MOD_ID);
 
-	public static final RegistrySupplier<Item> SEA_CROWN = ITEMS.register("sea_crown", () -> new SeaCrownItem(new QuiltItemSettings()));
-	public static final RegistrySupplier<Item> CRYSTAL_SPEAR = ITEMS.register("crystal_spear", () -> new CrystalSpearItem(ToolMaterials.AMETHYST, new QuiltItemSettings()));
-//	public static final RegistrySupplier<Item> BLUNDERBUSS = ITEMS.register("blunderbuss", () -> new BlunderbussItem(new QuiltItemSettings().maxCount(1)));
-	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new QuiltItemSettings().maxCount(1)));
-//	public static final RegistrySupplier<Item> COPPER_GAUNTLET = ITEMS.register("copper_gauntlet", () -> new CopperGauntletItem(new QuiltItemSettings().maxCount(1)));
-	public static final RegistrySupplier<Item> ELDER_GUARDIAN_SPIKE = ITEMS.register("elder_guardian_spike", () -> new ElderGuardianSpikeItem(new QuiltItemSettings().maxDamage(64)));
+	public static final RegistrySupplier<Item> SEA_CROWN = ITEMS.register("sea_crown", () -> new SeaCrownItem(new FabricItemSettings()));
+	public static final RegistrySupplier<Item> CRYSTAL_SPEAR = ITEMS.register("crystal_spear", () -> new CrystalSpearItem(ToolMaterials.AMETHYST, new FabricItemSettings()));
+//	public static final RegistrySupplier<Item> BLUNDERBUSS = ITEMS.register("blunderbuss", () -> new BlunderbussItem(new FabricItemSettings().maxCount(1)));
+	public static final RegistrySupplier<Item> ECHO_DAGGER = ITEMS.register("echo_dagger", () -> new EchoDaggerItem(new FabricItemSettings().stacksTo(1)));
+//	public static final RegistrySupplier<Item> COPPER_GAUNTLET = ITEMS.register("copper_gauntlet", () -> new CopperGauntletItem(new FabricItemSettings().maxCount(1)));
+	public static final RegistrySupplier<Item> ELDER_GUARDIAN_SPIKE = ITEMS.register("elder_guardian_spike", () -> new ElderGuardianSpikeItem(new FabricItemSettings().durability(64)));
 
-	public enum ToolMaterials implements ToolMaterial {
-		AMETHYST(1, 193, 5f, 7f, 22, () -> Ingredient.ofItems(Items.AMETHYST_SHARD));
+	public enum ToolMaterials implements Tier {
+		AMETHYST(1, 193, 5f, 7f, 22, () -> Ingredient.of(Items.AMETHYST_SHARD));
 
 		private final int miningLevel;
 		private final int itemDurability;
 		private final float miningSpeed;
 		private final float attackDamage;
 		private final int enchantability;
-		private final Lazy<Ingredient> repairIngredient;
+		private final LazyLoadedValue<Ingredient> repairIngredient;
 
 		ToolMaterials(int miningLevel, int itemDurability, float miningSpeed, float attackDamage, int enchantability, Supplier<Ingredient> repairIngredient) {
 			this.miningLevel = miningLevel;
@@ -38,26 +40,26 @@ public class ModItems {
 			this.miningSpeed = miningSpeed;
 			this.attackDamage = attackDamage;
 			this.enchantability = enchantability;
-			this.repairIngredient = new Lazy<>(repairIngredient);
+			this.repairIngredient = new LazyLoadedValue<>(repairIngredient);
 		}
 
-		public int getDurability() {
+		public int getUses() {
 			return itemDurability;
 		}
 
-		public float getMiningSpeedMultiplier() {
+		public float getSpeed() {
 			return miningSpeed;
 		}
 
-		public float getAttackDamage() {
+		public float getAttackDamageBonus() {
 			return attackDamage;
 		}
 
-		public int getMiningLevel() {
+		public int getLevel() {
 			return miningLevel;
 		}
 
-		public int getEnchantability() {
+		public int getEnchantmentValue() {
 			return enchantability;
 		}
 

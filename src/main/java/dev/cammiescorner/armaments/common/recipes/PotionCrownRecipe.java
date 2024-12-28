@@ -2,40 +2,40 @@ package dev.cammiescorner.armaments.common.recipes;
 
 import dev.cammiescorner.armaments.common.registry.ModItems;
 import dev.cammiescorner.armaments.common.registry.ModRecipes;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtil;
-import net.minecraft.potion.Potions;
-import net.minecraft.recipe.CraftingCategory;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.SpecialCraftingRecipe;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.Level;
 
-public class PotionCrownRecipe extends SpecialCraftingRecipe {
-	public PotionCrownRecipe(Identifier id, CraftingCategory category) {
+public class PotionCrownRecipe extends CustomRecipe {
+	public PotionCrownRecipe(ResourceLocation id, CraftingBookCategory category) {
 		super(id, category);
 	}
 
 	@Override
-	public boolean matches(RecipeInputInventory inventory, World world) {
+	public boolean matches(CraftingContainer inventory, Level world) {
 		boolean hasCrown = false;
 		boolean hasPotion = false;
 
-		for(ItemStack stack : inventory.getIngredients()) {
-			if(stack.isOf(ModItems.SEA_CROWN.get())) {
+		for(ItemStack stack : inventory.getItems()) {
+			if(stack.is(ModItems.SEA_CROWN.get())) {
 				if(hasCrown)
 					return false;
 
 				hasCrown = true;
 			}
-			if(stack.isOf(Items.POTION)) {
-				Potion potion = PotionUtil.getPotion(stack);
+			if(stack.is(Items.POTION)) {
+				Potion potion = PotionUtils.getPotion(stack);
 
-				if(hasPotion || potion == Potions.EMPTY || potion.hasInstantEffect())
+				if(hasPotion || potion == Potions.EMPTY || potion.hasInstantEffects())
 					return false;
 
 				hasPotion = true;
@@ -46,22 +46,22 @@ public class PotionCrownRecipe extends SpecialCraftingRecipe {
 	}
 
 	@Override
-	public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
+	public ItemStack assemble(CraftingContainer inventory, RegistryAccess registryManager) {
 		Potion potion = Potions.EMPTY;
 		ItemStack seaCrown = ItemStack.EMPTY;
 
-		for(ItemStack stack : inventory.getIngredients()) {
-			if(stack.isOf(ModItems.SEA_CROWN.get()))
+		for(ItemStack stack : inventory.getItems()) {
+			if(stack.is(ModItems.SEA_CROWN.get()))
 				seaCrown = stack.copy();
-			if(stack.isOf(Items.POTION))
-				potion = PotionUtil.getPotion(stack);
+			if(stack.is(Items.POTION))
+				potion = PotionUtils.getPotion(stack);
 		}
 
-		return potion != Potions.EMPTY && !seaCrown.isEmpty() ? PotionUtil.setPotion(seaCrown, potion) : ItemStack.EMPTY;
+		return potion != Potions.EMPTY && !seaCrown.isEmpty() ? PotionUtils.setPotion(seaCrown, potion) : ItemStack.EMPTY;
 	}
 
 	@Override
-	public boolean fits(int width, int height) {
+	public boolean canCraftInDimensions(int width, int height) {
 		return width * height >= 2;
 	}
 

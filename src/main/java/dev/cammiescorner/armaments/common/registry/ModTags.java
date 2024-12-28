@@ -1,12 +1,12 @@
 package dev.cammiescorner.armaments.common.registry;
 
 import dev.cammiescorner.armaments.Armaments;
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 
 public class ModTags {
-	public static final TagKey<Item> BLUNDERBUSS_AMMO = TagKey.of(RegistryKeys.ITEM, Armaments.id("blunderbuss_ammo"));
-	public static final TagKey<Item> BLUNDERBUSS_PROPELLANT = TagKey.of(RegistryKeys.ITEM, Armaments.id("blunderbuss_propellant"));
-	public static final TagKey<Item> HORNS = TagKey.of(RegistryKeys.ITEM, Armaments.id("horns"));
+	public static final TagKey<Item> BLUNDERBUSS_AMMO = TagKey.create(Registries.ITEM, Armaments.id("blunderbuss_ammo"));
+	public static final TagKey<Item> BLUNDERBUSS_PROPELLANT = TagKey.create(Registries.ITEM, Armaments.id("blunderbuss_propellant"));
+	public static final TagKey<Item> HORNS = TagKey.create(Registries.ITEM, Armaments.id("horns"));
 }

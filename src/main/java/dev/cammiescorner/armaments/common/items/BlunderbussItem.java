@@ -1,55 +1,54 @@
 package dev.cammiescorner.armaments.common.items;
 
 import dev.cammiescorner.armaments.common.registry.ModTags;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
-import net.minecraft.world.World;
-
 import java.util.function.Predicate;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 
 public class BlunderbussItem extends Item implements SpecialRenderItem {
-	private static final Predicate<ItemStack> AMMO = stack -> stack.isIn(ModTags.BLUNDERBUSS_AMMO);
-	private static final Predicate<ItemStack> PROPELLANT = stack -> stack.isIn(ModTags.BLUNDERBUSS_PROPELLANT);
+	private static final Predicate<ItemStack> AMMO = stack -> stack.is(ModTags.BLUNDERBUSS_AMMO);
+	private static final Predicate<ItemStack> PROPELLANT = stack -> stack.is(ModTags.BLUNDERBUSS_PROPELLANT);
 
-	public BlunderbussItem(Item.Settings settings) {
+	public BlunderbussItem(Item.Properties settings) {
 		super(settings);
 	}
 
 	@Override
-	public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
-		if(!world.isClient && user instanceof PlayerEntity player) {
+	public void onUseTick(Level world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+		if(!world.isClientSide && user instanceof Player player) {
 			if(!isLoaded(stack)) {
 				ItemStack propellant = findItem(player, PROPELLANT);
 
-				if(remainingUseTicks != getMaxUseTime(stack) && remainingUseTicks % 20 == 0 && (PROPELLANT.test(propellant) || player.isCreative())) {
+				if(remainingUseTicks != getUseDuration(stack) && remainingUseTicks % 20 == 0 && (PROPELLANT.test(propellant) || player.isCreative())) {
 					setCharge(stack, getCharge(stack) + 1);
 
 					if(!player.isCreative())
-						propellant.decrement(1);
+						propellant.shrink(1);
 
 					System.out.println(getCharge(stack));
 				}
 			}
 			else {
-				stack.getOrCreateNbt().putBoolean("Loaded", false);
+				stack.getOrCreateTag().putBoolean("Loaded", false);
 				setCharge(stack, 0);
 			}
 		}
 	}
 
 	@Override
-	public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
-		if(!world.isClient) {
+	public void releaseUsing(ItemStack stack, Level world, LivingEntity user, int remainingUseTicks) {
+		if(!world.isClientSide) {
 			boolean loaded = isLoaded(stack);
 
-			if((!(user instanceof PlayerEntity player) || (AMMO.test(findItem(player, AMMO)) || player.isCreative()))) {
+			if((!(user instanceof Player player) || (AMMO.test(findItem(player, AMMO)) || player.isCreative()))) {
 				if(getCharge(stack) > 0 && !loaded) {
 					loadGun(stack);
 				}
@@ -58,34 +57,34 @@ public class BlunderbussItem extends Item implements SpecialRenderItem {
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack stack = user.getStackInHand(hand);
+	public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+		ItemStack stack = user.getItemInHand(hand);
 		boolean loaded = isLoaded(stack);
 
 		if(loaded || AMMO.test(findItem(user, AMMO)) || user.isCreative()) {
-			user.setCurrentHand(hand);
-			return TypedActionResult.success(stack);
+			user.startUsingItem(hand);
+			return InteractionResultHolder.success(stack);
 		}
 
-		return TypedActionResult.fail(stack);
+		return InteractionResultHolder.fail(stack);
 	}
 
 	@Override
-	public int getMaxUseTime(ItemStack stack) {
+	public int getUseDuration(ItemStack stack) {
 		return 72000;
 	}
 
 	@Override
-	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.CROSSBOW;
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.CROSSBOW;
 	}
 
-	public ItemStack findItem(PlayerEntity player, Predicate<ItemStack> predicate) {
-		PlayerInventory inv = player.getInventory();
+	public ItemStack findItem(Player player, Predicate<ItemStack> predicate) {
+		Inventory inv = player.getInventory();
 		ItemStack returnStack = ItemStack.EMPTY;
 
-		for(int i = 0; i < inv.size(); i++) {
-			ItemStack stack = inv.getStack(i);
+		for(int i = 0; i < inv.getContainerSize(); i++) {
+			ItemStack stack = inv.getItem(i);
 
 			if(predicate.test(stack)) {
 				returnStack = stack;
@@ -97,22 +96,22 @@ public class BlunderbussItem extends Item implements SpecialRenderItem {
 	}
 
 	public void loadGun(ItemStack stack) {
-		NbtCompound tag = stack.getOrCreateNbt();
+		CompoundTag tag = stack.getOrCreateTag();
 		tag.putBoolean("Loaded", true);
 	}
 
 	public boolean isLoaded(ItemStack stack) {
-		NbtCompound tag = stack.getOrCreateNbt();
+		CompoundTag tag = stack.getOrCreateTag();
 		return tag.getBoolean("Loaded");
 	}
 
 	public void setCharge(ItemStack stack, int charge) {
-		NbtCompound tag = stack.getOrCreateNbt();
+		CompoundTag tag = stack.getOrCreateTag();
 		tag.putInt("Charge", charge);
 	}
 
 	public int getCharge(ItemStack stack) {
-		NbtCompound tag = stack.getOrCreateNbt();
+		CompoundTag tag = stack.getOrCreateTag();
 		return tag.getInt("Charge");
 	}
 
