@@ -67,7 +67,7 @@ public class SeaCrownItem extends ArmorItem implements Equipable {
 			tooltip.add(Component.translatable(
 				"potion.withAmplifier",
 				Component.translatable(effect.getDescriptionId()),
-				Component.translatable("potion.potency." + effect.getAmplifier())
+				Component.translatable("potion.potency." + Math.min(effect.getAmplifier(), ArmamentsConfig.SeaCrown.potionAmplifier))
 			).withStyle(effect.getEffect().isBeneficial() ? ChatFormatting.BLUE : ChatFormatting.RED));
 		}
 	}
