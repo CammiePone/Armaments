@@ -23,8 +23,21 @@ public final class ArmamentsConfig {
 			type = EntryType.INTEGER,
 			translation = "config." + Armaments.MOD_ID + ".sea_crown.potion_amplifier"
 		)
-		@IntRange(min = 0, max = 255)
 		public static int potionAmplifier = 0;
+
+		@ConfigEntry(
+			id = "healthModifier",
+			type = EntryType.INTEGER,
+			translation = "config." + Armaments.MOD_ID + ".sea_crown.health_modifier"
+		)
+		public static int healthModifier = -2;
+
+		@ConfigEntry(
+			id = "armorPoints",
+			type = EntryType.INTEGER,
+			translation = "config." + Armaments.MOD_ID + ".sea_crown.armor_points"
+		)
+		public static int armorPoints = 0;
 	}
 
 	@Category(

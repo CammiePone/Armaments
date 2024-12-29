@@ -19,6 +19,8 @@ loom {
 			sourceSet("main")
 		}
 	}
+
+	accessWidenerPath.set(project.file("src/main/resources/armaments.accesswidener"))
 }
 
 repositories {

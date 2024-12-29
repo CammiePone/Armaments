@@ -6,6 +6,7 @@ import dev.cammiescorner.armaments.ArmamentsConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -30,14 +31,9 @@ import java.util.UUID;
 
 public class SeaCrownItem extends ArmorItem implements Equipable {
 	private static final UUID HP_REDUCTION = UUID.fromString("1ed2ecfe-4ba3-4137-a110-dcb9db597d89");
-	private final Multimap<Attribute, AttributeModifier> attributeModifiers;
 
 	public SeaCrownItem(Properties settings) {
 		super(ArmorMaterials.TURTLE, Type.HELMET, settings);
-
-		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-		builder.put(Attributes.MAX_HEALTH, new AttributeModifier(HP_REDUCTION, "Crown modifier", -2, AttributeModifier.Operation.ADDITION));
-		this.attributeModifiers = builder.build();
 	}
 
 	@Override
@@ -51,7 +47,7 @@ public class SeaCrownItem extends ArmorItem implements Equipable {
 			Potion potion = PotionUtils.getPotion(stack);
 
 			for(MobEffectInstance effect : potion.getEffects())
-				wearer.addEffect(new MobEffectInstance(effect.getEffect(), 100, ArmamentsConfig.SeaCrown.potionAmplifier, true, false, true));
+				wearer.addEffect(new MobEffectInstance(effect.getEffect(), 100, Math.min(effect.getAmplifier(), ArmamentsConfig.SeaCrown.potionAmplifier), true, false, true));
 
 			if(wearer instanceof ServerPlayer player)
 				player.resetSentInfo();
@@ -67,12 +63,24 @@ public class SeaCrownItem extends ArmorItem implements Equipable {
 
 		Potion potion = Potion.byName(tag.getString("Potion"));
 
-		for(MobEffectInstance effect : potion.getEffects())
-			tooltip.add(Component.translatable(effect.getDescriptionId()).withStyle(effect.getEffect().isBeneficial() ? ChatFormatting.BLUE : ChatFormatting.RED));
+		for(MobEffectInstance effect : potion.getEffects()) {
+			tooltip.add(Component.translatable(
+				"potion.withAmplifier",
+				Component.translatable(effect.getDescriptionId()),
+				Component.translatable("potion.potency." + effect.getAmplifier())
+			).withStyle(effect.getEffect().isBeneficial() ? ChatFormatting.BLUE : ChatFormatting.RED));
+		}
 	}
 
 	@Override
 	public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-		return slot == EquipmentSlot.HEAD ? this.attributeModifiers : super.getDefaultAttributeModifiers(slot);
+		ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
+
+		if(ArmamentsConfig.SeaCrown.healthModifier != 0)
+			builder.put(Attributes.MAX_HEALTH, new AttributeModifier(HP_REDUCTION, "Crown modifier", ArmamentsConfig.SeaCrown.healthModifier, AttributeModifier.Operation.ADDITION));
+		if(ArmamentsConfig.SeaCrown.armorPoints != 0)
+			builder.put(Attributes.ARMOR, new AttributeModifier(ArmorItem.ARMOR_MODIFIER_UUID_PER_TYPE.get(getType()), "Crown modifier", ArmamentsConfig.SeaCrown.armorPoints, AttributeModifier.Operation.ADDITION));
+
+		return slot == EquipmentSlot.HEAD ? builder.build() : super.getDefaultAttributeModifiers(slot);
 	}
 }
